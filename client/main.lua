@@ -93,12 +93,6 @@ local function getTextCoords(door)
 	return setTextCoords(door)
 end
 
-local function round(value, numDecimalPlaces)
-	if not numDecimalPlaces then return math.floor(value + 0.5) end
-    local power = 10 ^ numDecimalPlaces
-    return math.floor((value * power) + 0.5) / (power)
-end
-
 local function loadAnimDict(dict)
 	RequestAnimDict(dict)
 	while not HasAnimDictLoaded(dict) do
@@ -410,7 +404,7 @@ RegisterNetEvent('qb-doorlock:client:setState', function(serverId, doorID, state
 						return
 					end
 				else
-					if round(v.currentHeading, 0) == round(v.objYaw or v.objHeading, 0) then
+					if QBCore.Shared.Round(v.currentHeading, 0) == QBCore.Shared.Round(v.objYaw or v.objHeading, 0) then
 						DoorSystemSetDoorState(v.doorHash, 4, false, false)
 					end
 				end
@@ -442,7 +436,7 @@ RegisterNetEvent('qb-doorlock:client:setState', function(serverId, doorID, state
 				playSound(current, src, enableSounds)
 				return
 			else
-				if round(current.currentHeading, 0) == round(current.objYaw or current.objHeading, 0) then
+				if QBCore.Shared.Round(current.currentHeading, 0) == QBCore.Shared.Round(current.objYaw or current.objHeading, 0) then
 					DoorSystemSetDoorState(current.doorHash, 4, false, false)
 				end
 			end
@@ -538,11 +532,25 @@ RegisterNetEvent('qb-doorlock:client:addNewDoor', function()
 				default = Config.SaveDoorDialog and doorData.job,
 			},
 			{
+				text = Lang:t("general.jobGrade_authorisation_menu"),
+				name = "jobGrade",
+				type = "number",
+				isRequired = false,
+				default = Config.SaveDoorDialog and doorData.jobGrade,
+			},
+			{
 				text = Lang:t("general.gang_authorisation_menu"),
 				name = "gang",
 				type = "text",
 				isRequired = false,
 				default = Config.SaveDoorDialog and doorData.gang,
+			},
+			{
+				text = Lang:t("general.gangGrade_authorisation_menu"),
+				name = "gangGrade",
+				type = "number",
+				isRequired = false,
+				default = Config.SaveDoorDialog and doorData.gangGrade,
 			},
 			{
 				text = Lang:t("general.citizenid_authorisation_menu"),
@@ -590,7 +598,9 @@ RegisterNetEvent('qb-doorlock:client:addNewDoor', function()
 
 	if doorData.configfile == '' then doorData.configfile = false end
 	if doorData.job == '' then doorData.job = false end
+	if doorData.jobGrade == '' then doorData.jobGrade = nil end
 	if doorData.gang == '' then doorData.gang = false end
+	if doorData.gangGrade == '' then doorData.gangGrade = nil end
 	if doorData.cid == '' then doorData.cid = false end
 	if doorData.item == '' then doorData.item = false end
 	if doorData.doorlabel == '' then doorData.doorlabel = nil end
